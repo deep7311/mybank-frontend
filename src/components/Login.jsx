@@ -3,9 +3,11 @@ import React, { useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
@@ -45,18 +47,29 @@ const Login = () => {
         <input
           type="email"
           name="email"
+          value={data.email}
           placeholder="Enter your email"
           onChange={handleInput}
           className="w-full mb-4 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter your password"
-          onChange={handleInput}
-          className="w-full mb-6 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
-        />
+        <div className="relative mb-6">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={data.password}
+            placeholder="Enter your password"
+            onChange={handleInput}
+            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 pr-12"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute top-1/2 right-3 transform -translate-y-1/2 text-xl text-white/80 hover:text-white"
+          >
+            {showPassword ? <FiEyeOff /> : <FiEye />}
+          </button>
+        </div>
 
         <button
           type="submit"

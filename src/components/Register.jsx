@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 
 const Register = () => {
   const [data, setData] = useState({
@@ -11,13 +12,14 @@ const Register = () => {
     confirm_password: ''
   })
 
+  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const url = import.meta.env.VITE_API_URL
 
   const handleInput = (e) => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
-
-  const url = import.meta.env.VITE_API_URL
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,6 +38,7 @@ const Register = () => {
           password: '',
           confirm_password: ''
         })
+        navigate('/login')
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong")
@@ -45,79 +48,85 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-200 p-4">
-      <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-xl w-full max-w-md p-8">
-        <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">Create Account</h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-800 to-indigo-900 flex items-center justify-center px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white/10 backdrop-blur-md p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-md text-white border border-white/20"
+      >
+        <h2 className="text-3xl font-bold text-center mb-6">Create Account</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Username</label>
-            <input
-              type="text"
-              name="name"
-              value={data.name}
-              onChange={handleInput}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
+        {/* Name */}
+        <input
+          type="text"
+          name="name"
+          value={data.name}
+          placeholder="Enter your name"
+          onChange={handleInput}
+          required
+          className="w-full mb-4 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        />
 
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={data.email}
-              onChange={handleInput}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
+        {/* Email */}
+        <input
+          type="email"
+          name="email"
+          value={data.email}
+          placeholder="Enter your email"
+          onChange={handleInput}
+          required
+          className="w-full mb-4 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        />
 
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={data.password}
-              onChange={handleInput}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Confirm Password</label>
-            <input
-              type="password"
-              name="confirm_password"
-              value={data.confirm_password}
-              onChange={handleInput}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-2 mt-4 rounded-lg text-white font-semibold transition-all duration-300
-              ${loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-indigo-600 hover:to-purple-600"
-              }`}
+        {/* Password with eye toggle */}
+        <div className="relative mb-4">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            value={data.password}
+            placeholder="Create password"
+            onChange={handleInput}
+            required
+            className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 pr-10"
+          />
+          <div
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white cursor-pointer"
+            onClick={() => setShowPassword(!showPassword)}
           >
-            {loading ? "Creating..." : "Register"}
-          </button>
+            {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+          </div>
+        </div>
 
-          <p className="text-center text-sm mt-4 text-gray-600">
-            Already have an account?{" "}
-            <Link to="/login" className="text-purple-600 font-semibold hover:underline">
-              Login
-            </Link>
-          </p>
-        </form>
-      </div>
+        {/* Confirm Password */}
+        <input
+          type="password"
+          name="confirm_password"
+          value={data.confirm_password}
+          placeholder="Confirm password"
+          onChange={handleInput}
+          required
+          className="w-full mb-6 p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        />
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-3 rounded-lg font-semibold transition duration-300 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-yellow-400 hover:bg-yellow-500 text-black"
+          }`}
+        >
+          {loading ? "Creating..." : "Register"}
+        </button>
+
+        <p className="mt-6 text-center text-sm text-white/80">
+          Already have an account?{" "}
+          <Link to="/login" className="underline text-yellow-300 hover:text-yellow-400">
+            Login
+          </Link>
+        </p>
+      </form>
     </div>
   )
 }
